@@ -24,19 +24,20 @@ case $1 in
 graph_title Installed packages
 graph_vlabel Packages
 graph_category system
-installed.label installed
 core.label core
+core.draw AREA
 extra.label extra
+extra.draw STACK
 community.label community
+community.draw STACK
 aur.label aur
+aur.draw STACK
 updates.label updates
+updates.draw LINE2
 updates.warning 1
 EOM
         exit 0;;
 esac
-
-printf "installed.value "
-pacman -Q | wc -l
 
 printf "core.value "
 paclist core | wc -l
