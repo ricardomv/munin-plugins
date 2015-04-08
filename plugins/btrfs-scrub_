@@ -1,0 +1,61 @@
+#!/usr/bin/bash
+#
+#   Munin Plugin to graph the number of installed packages and pending updates.
+#
+#   Copyright © 2015 Ricardo Vieira <ricardo.vieira@tecnico.ulisboa.pt>
+#
+#   This program is free software; you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation; either version 2 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+SUFIX=$(echo $0 | sed 's/.*btrfs-scrub_//')
+
+if [ -e /dev/$SUFIX ]; then
+	DEVICE=/dev/$SUFIX
+elif [ -e /dev/disk/by-label/$SUFIX ]; then
+	DEVICE=$(readlink -f /dev/disk/by-label/$SUFIX)
+elif [ -e /dev/disk/by-uuid/$SUFIX ]; then
+	DEVICE=$(readlink -f /dev/disk/by-uuid/$SUFIX)
+elif [ -e /dev/disk/by-id/$SUFIX ]; then
+	DEVICE=$(readlink -f /dev/disk/by-id/$SUFIX)
+else
+	echo "ERROR"
+	exit 1;
+fi
+
+case $1 in
+   config)
+        cat <<EOF
+graph_title Btrfs scrub of $SUFIX: 
+graph_category disk
+data_extents_scrubbed.label data_extents_scrubbed
+tree_extents_scrubbed.label tree_extents_scrubbed
+data_bytes_scrubbed.label data_bytes_scrubbed
+tree_bytes_scrubbed.label tree_bytes_scrubbed
+read_errors.label read_errors
+csum_errors.label csum_errors
+verify_errors.label verify_errors
+no_csum.label no_csum
+csum_discards.label csum_discards
+super_errors.label super_errors
+malloc_errors.label malloc_errors
+uncorrectable_errors.label uncorrectable_errors
+unverified_errors.label unverified_errors
+corrected_errors.label corrected_errors
+last_physical.label last_physical
+EOF
+        exit 0;;
+esac
+
+
+btrfs scrub status -R $DEVICE | tail -n +3 | sed 's/:/.value/g; s/^[ \t]*//'
