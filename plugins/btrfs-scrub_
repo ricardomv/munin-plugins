@@ -36,22 +36,30 @@ fi
 case $1 in
    config)
         cat <<EOF
-graph_title Btrfs scrub of $SUFIX: 
+graph_title Btrfs scrub of $SUFIX
 graph_category disk
 data_extents_scrubbed.label data_extents_scrubbed
 tree_extents_scrubbed.label tree_extents_scrubbed
 data_bytes_scrubbed.label data_bytes_scrubbed
 tree_bytes_scrubbed.label tree_bytes_scrubbed
 read_errors.label read_errors
+read_errors.warning 1
 csum_errors.label csum_errors
+csum_errors.warning 1
 verify_errors.label verify_errors
+verify_errors.warning 1
 no_csum.label no_csum
 csum_discards.label csum_discards
 super_errors.label super_errors
+super_errors.warning 1
 malloc_errors.label malloc_errors
+malloc_errors.warning 1
 uncorrectable_errors.label uncorrectable_errors
+uncorrectable_errors.warning 1
 unverified_errors.label unverified_errors
+unverified_errors.warning 1
 corrected_errors.label corrected_errors
+corrected_errors.warning 1
 last_physical.label last_physical
 EOF
         exit 0;;
